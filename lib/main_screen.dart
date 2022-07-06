@@ -15,11 +15,14 @@ class MainScreen extends StatelessWidget{
       body: ListView.builder(
         itemBuilder: (context, index){
           final TourismPlace place = tourismPlaceList[index];
+
           return InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context){
-                return DetailScreen(place);
-              }));
+              Navigator.push(context, PageRouteBuilder(
+                // transitionDuration: const Duration(seconds: 1),
+                // reverseTransitionDuration: const Duration(seconds: 1),
+                pageBuilder: (_, __, ___) => DetailScreen(place)
+              ));
             },
             child: Card(
               child: Row(
@@ -27,7 +30,10 @@ class MainScreen extends StatelessWidget{
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Image.asset(place.imageAsset)
+                    child: Hero(
+                      tag: 'animate-${place.imageAsset}',
+                      child: Image.asset(place.imageAsset)
+                    )
                   ),
                   Expanded(
                     flex: 3,

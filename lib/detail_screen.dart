@@ -19,9 +19,6 @@ class DetailScreen extends StatelessWidget{
               onPressed: () { 
                 Navigator.pop(context);
               },
-              padding: const EdgeInsets.all(10),
-              shape: const CircleBorder(),
-              fillColor: Color.fromARGB(75, 158, 158, 158),
               child: const Icon(Icons.arrow_back),
             );
           },
@@ -34,7 +31,10 @@ class DetailScreen extends StatelessWidget{
         child: Column (
         crossAxisAlignment: CrossAxisAlignment.stretch, //memaksimalkan lebar column
         children: <Widget>[
-          Image.asset(place.imageAsset),
+          Hero(
+            tag: 'animate-${place.imageAsset}',
+            child: Image.asset(place.imageAsset)
+          ),
           Container(
             margin: const EdgeInsets.only(top: 16.0),
             child: Text(
