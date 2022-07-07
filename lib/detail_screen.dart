@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:wisata_bandung/model/tourism_place.dart';
-
+import 'dart:io';
 
 class DetailScreen extends StatelessWidget{
   final TourismPlace place;
   DetailScreen(this.place);
+
+  Widget build(BuildContext context){
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints){
+        if (constraints.maxWidth > 800){
+          return DetailWebPage(place: place);
+        }else {
+          return DetailMobilePage(place);
+        }
+      })
+    ;
+  }
+}
+
+class DetailMobilePage extends StatelessWidget{
+  final TourismPlace place;
+  DetailMobilePage(this.place);
 
   @override 
   Widget build(BuildContext context){
@@ -137,8 +154,148 @@ class DetailScreen extends StatelessWidget{
             ),
           ),
         ],
-          ),
+      ),
       )
+    );
+  }
+}
+
+class DetailWebPage extends StatelessWidget{
+  final TourismPlace place;
+  DetailWebPage({required this.place});
+  
+
+  Widget build(BuildContext context){
+    return SingleChildScrollView(
+      child: Material(
+        type: MaterialType.transparency,
+        child: Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
+                onTap: (){
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'WISATA BANDUNG',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            place.imageAsset
+                          ),
+                        ),
+                        Container(
+                          height: 150,
+                          margin: const EdgeInsets.all(8),
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: place.imageUrls.map((urlImage){
+                              return Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(3.0),
+                                  child: Image.network(urlImage),
+                                )
+                              );
+                            }).toList(),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  Flexible(
+                    flex: 1,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              place.name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.calendar_today),
+                                        Container(
+                                          margin: const EdgeInsets.only(left: 10),
+                                          child: Text(place.openDays)
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.access_time),
+                                        Container(
+                                          margin: const EdgeInsets.only(left: 10),
+                                          child: Text(place.openTime)
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.monetization_on),
+                                        Container(
+                                          margin: const EdgeInsets.only(left: 10),
+                                          child: Text(place.openDays)
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: const [
+                                    FavoriteButton()
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              place.description,
+                              textAlign: TextAlign.justify,
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -168,3 +325,4 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     );
   }
 }
+

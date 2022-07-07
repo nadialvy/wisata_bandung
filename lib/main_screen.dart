@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:wisata_bandung/model/tourism_place.dart';
 
 import 'detail_screen.dart';
@@ -10,17 +11,34 @@ class MainScreen extends StatelessWidget{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wisata Bandung')
+        title: Text('Wisata Bandung . Size: ${MediaQuery.of(context).size.width}')
       ),
-      body: ListView.builder(
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints){
+          if (constraints.maxWidth<= 600){
+            return const TourismPlaceList();
+          }else if(constraints.maxWidth <= 900){
+            return TourismPlaceGrid(gridCount: 4);
+          } else {
+            return TourismPlaceGrid(gridCount: 6);
+          }
+        },
+    ));
+  }
+}
+
+class TourismPlaceList extends StatelessWidget{
+  const TourismPlaceList({Key? key}) : super(key: key);
+
+  @override 
+  Widget build(BuildContext context){
+    return ListView.builder(
         itemBuilder: (context, index){
           final TourismPlace place = tourismPlaceList[index];
 
           return InkWell(
             onTap: (){
               Navigator.push(context, PageRouteBuilder(
-                // transitionDuration: const Duration(seconds: 1),
-                // reverseTransitionDuration: const Duration(seconds: 1),
                 pageBuilder: (_, __, ___) => DetailScreen(place)
               ));
             },
@@ -61,7 +79,71 @@ class MainScreen extends StatelessWidget{
           );
         },
         itemCount: tourismPlaceList.length,
-      )
+      );
+  }
+}
+
+class TourismPlaceGrid extends StatelessWidget{
+  final int gridCount;
+
+  TourismPlaceGrid({required this.gridCount});
+
+  @override 
+  Widget build(BuildContext context){
+    return Scrollbar(
+      thumbVisibility: true,
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: GridView.count(
+          crossAxisCount: gridCount,
+          //        ambil langsung dari file tourism_dart
+          children: tourismPlaceList.map((place){
+            return InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return DetailScreen(place);
+                }));
+              },
+              child: Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.asset(
+                          place.imageAsset,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        place.name,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                    // SizedBox(height: -10,),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, bottom: 8),
+                      child: Text(
+                        place.location,
+                        style: const TextStyle(
+                          fontSize: 10
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ),
+            );
+          }).toList()
+        ),
+      ),
     );
   }
 }
